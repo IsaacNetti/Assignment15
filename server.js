@@ -14,6 +14,7 @@ app.get("/", (req, res) => {
 });
 
 let albums = [{
+        _id: 1,
         name: "Maybe Man",
         artist: "AJR", 
         rating:"7",
@@ -35,6 +36,7 @@ let albums = [{
         ],
     },
     {
+        _id: 2,
         name: "1989 (Taylor's version)",
         artist: "Taylor Swift", 
         rating:"9",
@@ -60,6 +62,7 @@ let albums = [{
         ],
     },
     {
+        _id: 3,
         name: "Stick Season",
         artist: "Noah Kahan", 
         rating:"8",
@@ -98,6 +101,7 @@ app.post("/api/albums",upload.single("img"), (req, res) => {
     }
 
     const album = {
+        _id: albums.length + 1,
         name: req.body.name,
         artist: req.body.artist,
         rating: req.body.rating,
@@ -109,9 +113,49 @@ app.post("/api/albums",upload.single("img"), (req, res) => {
     albums.push(album);
     res.send(albums);
 });
+app.put("/api/albums/:id", upload.single("img"), (req, res) => {
+    const id = parseInt(req.params.id);
+
+    const album = albums.find((r) => r._id === id);
+
+    const result = validatealbum(req.body);
+
+    if (result.error) {
+        res.status(400).send(result.error.details[0].message);
+        return;
+    }
+
+    album.name = req.body.name;
+    album.artist = req.body.artist;
+    album.rating = req.body.rating;
+    album.genre = req.body.genre;
+    album.releaseDate = req.body.released;
+    album.songs = req.body.songs.split(",");
+
+
+    res.send(album);
+});
+
+app.delete("/api/albums/:id", upload.single("img"), (req, res) => {
+    const id = parseInt(req.params.id);
+
+    const album = albums.find((r) => r._id === id);
+
+    if (!album) {
+        res.status(404).send("The recipe was not found");
+        return;
+    }
+
+    const index = albums.indexOf(album,);
+    albums.splice(index, 1);
+    res.send(album);
+
+});
+
 
 const validatealbum = (album) => {
     const schema = Joi.object({
+        _id: Joi.allow(""),
         name: Joi.string().min(3).required(),
         artist: Joi.string().min(3).required(),
         rating: Joi.string().required(),
