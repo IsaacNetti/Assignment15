@@ -61,10 +61,22 @@ const showAlbums = async() => {
             document.getElementById("add-title").innerHTML = "Edit Album";
             populateEditForm(album);
         };
-
+        let ff = 0;
+        const yesLink = document.createElement("a");
         dLink.onclick = (e) => {
             e.preventDefault();
-            deleteAlbum(album);
+            if(ff == 1){     
+                    yesLink.remove();
+                    ff = 0;
+            }
+            else{
+                ff = 1;
+                yesLink.innerHTML = "&#x2713;";
+                dLink.append(yesLink);
+                yesLink.onclick = () => {
+                    deleteAlbum(album);
+                }
+            }
         };
 
     });
